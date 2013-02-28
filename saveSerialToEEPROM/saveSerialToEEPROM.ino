@@ -1,6 +1,7 @@
 #include <EEPROM.h>
 
 int address = 0;
+bool prompt = false;
 
 void setup() {
   Serial.begin(38400);
@@ -25,15 +26,18 @@ void setup() {
 }
 
 void loop() {
-  Serial.write("AT Z\r");
-  delay(500);
+  if (false == prompt) {
+    Serial.write("AT Z\r");
+    delay(500);
+  }
   while (Serial.available() > 0) {
     digitalWrite(6, HIGH);
     int c = Serial.read();
     if (c == '>') {
+      prompt = !prompt;
       Serial.write("01 0c\r");
       delay(500);
-      c = Serial.read();
+      //c = Serial.read();
     }
     EEPROM.write(address, c);
     ++address;
